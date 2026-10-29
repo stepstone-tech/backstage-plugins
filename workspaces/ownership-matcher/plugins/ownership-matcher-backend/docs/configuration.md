@@ -169,7 +169,7 @@ See [Notifications](notifications.md).
 
 ### `escalation`
 
-Omit the block to disable escalation. See [Escalation](escalation.md).
+Omit the block to disable escalation. See [Escalation](escalation.md). Escalation actors are matched by job title, which no Backstage provider sets by default — see [Job titles](escalation.md#job-titles) before enabling this block.
 
 | Key                    | Default | Description                                                                                       |
 | ---------------------- | ------- | ------------------------------------------------------------------------------------------------- |
@@ -184,7 +184,7 @@ Level options:
 | Key             | Description                                                                                       |
 | --------------- | ------------------------------------------------------------------------------------------------- |
 | `groupFilter`   | `Kind` or `Kind:type` of the ancestor group to escalate to, e.g. `Group:domain`.                  |
-| `titlePatterns` | Non-empty list of regexes matched against the user job title (`metadata.userDetails.jobTitle`, falling back to `spec.profile.title`). |
+| `titlePatterns` | Non-empty list of regexes matched against the user job title (`metadata.userDetails.jobTitle`). See [Job titles](escalation.md#job-titles). |
 | `managerChain`  | `false`: match members of the group. `true`: walk each team member's manager chain instead.       |
 | `timeoutDays`   | Positive integer. Days the actor has before the case moves on.                                    |
 

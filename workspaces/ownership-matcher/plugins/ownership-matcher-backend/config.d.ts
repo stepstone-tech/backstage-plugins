@@ -186,12 +186,12 @@ export interface Config {
        * proposal phase, is implicit). Non-empty.
        */
       levels: Array<{
-        /** Group to resolve at this level, as `Kind` or `Kind:type`, e.g. `Group:domain`. */
+        /** Group to resolve at this level, as `Kind` or `Kind:type`, e.g. `Group:department`. */
         groupFilter: string;
         /** Days the level's actor has before the case moves on. Positive integer. */
         timeoutDays: number;
         /**
-         * Regexes matched against members' `metadata.userDetails.jobTitle`.
+         * Regexes matched against a user's `metadata.userDetails.jobTitle`.
          * Required, as `relations` is not implemented yet.
          */
         titlePatterns: string[];

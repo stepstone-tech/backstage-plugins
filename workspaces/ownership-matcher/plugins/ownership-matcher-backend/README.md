@@ -36,6 +36,8 @@ ownershipMatcher:
         timeoutDays: 7
 ```
 
+`titlePatterns` matches User job titles, which your catalog ingestion must populate — see [Job titles](docs/escalation.md#job-titles).
+
 Set `owners.excludeUserKind: true` if User owners should never be flagged as zombies (default `false`: a User owner must exist in the catalog).
 
 See [Configuration](docs/configuration.md) for all keys.

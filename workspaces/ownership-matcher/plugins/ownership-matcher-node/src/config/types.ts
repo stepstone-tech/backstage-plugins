@@ -24,15 +24,15 @@ export type ScheduleConfig = SchedulerServiceTaskScheduleDefinition;
 
 /** Shape of one entry in `escalation.levels`. */
 export interface EscalationLevelConfig {
-  /** `Kind:type`g */
+  /** Ancestor group to escalate to, as `Kind` or `Kind:type`, e.g. `Group:department`. */
   groupFilter: string;
   /** Days the system waits for this level's actor before auto-advancing. */
   timeoutDays: number;
-  /** Regex strings matched against `metadata.userDetails.jobTitle` of direct members. */
+  /** Regex strings matched against a user's `metadata.userDetails.jobTitle`. */
   titlePatterns?: string[];
-  /** Relation types (e.g. */
+  /** Relation-based actor matching. Not yet implemented — rejected at config load; use `titlePatterns`. */
   relations?: string[];
-  /** When true, resolve actor by walking team members' manager chains rather than domain group membership. */
+  /** When true, resolve the actor by walking team members' manager chains instead of matching direct members of the group selected by `groupFilter`. */
   managerChain?: boolean;
 }
 
