@@ -1,0 +1,16 @@
+{
+  "extends": "@backstage/cli/config/tsconfig.json",
+  "include": [
+    "workspaces/*/plugins/*/src",
+    "workspaces/*/plugins/*/config.d.ts",
+    "workspaces/*/plugins/*/dev",
+    "workspaces/*/plugins/*/migrations"
+  ],
+  "exclude": ["node_modules"],
+  "compilerOptions": {
+    "outDir": "dist-types",
+    "rootDir": ".",
+    "jsx": "react-jsx",
+    "useUnknownInCatchVariables": false
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "name": "root",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": "22 || 24"
+  },
+  "scripts": {
+    "start": "node scripts/start.js",
+    "tsc": "tsc",
+    "tsc:full": "tsc --skipLibCheck false --incremental false",
+    "build": "yarn tsc && backstage-cli repo build --all",
+    "clean": "backstage-cli repo clean",
+    "test": "backstage-cli repo test",
+    "test:coverage": "backstage-cli repo test --coverage",
+    "lint": "backstage-cli repo lint",
+    "fix": "backstage-cli repo fix",
+    "prettier:check": "prettier --check .",
+    "new": "backstage-cli new",
+    "changeset": "changeset",
+    "release": "changeset version && prettier --write 'workspaces/*/plugins/*/{package.json,CHANGELOG.md}' && yarn install --mode=update-lockfile"
+  },
+  "workspaces": {
+    "packages": [
+      "workspaces/*/plugins/*"
+    ]
+  },
+  "devDependencies": {
+    "@backstage/cli": "^0.36.6",
+    "@backstage/cli-defaults": "^0.1.6",
+    "@changesets/cli": "^2.31.1",
+    "@jest/environment-jsdom-abstract": "^30.0.0",
+    "@types/jest": "^30.0.0",
+    "jest": "^30.2.0",
+    "jsdom": "^27.1.0",
+    "prettier": "^2.3.2",
+    "typescript": "~5.8.0"
+  },
+  "resolutions": {
+    "fast-uri": "^3.1.4",
+    "@yarnpkg/core": "4.9.1",
+    "jest-runtime": "30.2.0",
+    "parse-url": "5.0.2",
+    "js-cookie": "^3.0.5",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "@testing-library/react": "^16.0.0",
+    "@testing-library/dom": "^10.0.0",
+    "undici": "^7.24.0",
+    "minimatch@^9.0.5": "^9.0.5",
+    "minimatch@^3.0.4": "^3.1.5",
+    "minimatch@npm:3.0.5": "^3.1.5",
+    "js-yaml@npm:=4.1.1": "^4.3.0",
+    "flatted": "^3.4.2",
+    "tar": "^7.5.11",
+    "fast-xml-parser": "^5.5.7",
+    "koa": "^2.16.4",
+    "lodash": "^4.18.0",
+    "picomatch": "^2.3.2",
+    "svgo": "^2.8.1",
+    "underscore": "^1.13.8",
+    "brace-expansion": "^2.0.3",
+    "@babel/plugin-transform-modules-systemjs": "^7.29.4",
+    "path-to-regexp@0.1.12": "0.1.13",
+    "path-to-regexp@~0.1.12": "0.1.13",
+    "tar@^7.5.2": "^7.5.15",
+    "tar@^7.5.6": "^7.5.15",
+    "basic-ftp@^5.0.2": "^6.2.1",
+    "urllib@^3.23.0": "^4.9.1",
+    "axios@^1.0.0": "^1.15.2",
+    "axios@^1.12.0": "^1.15.2",
+    "axios@^1.12.2": "^1.15.2",
+    "axios@^1.7.4": "^1.15.2",
+    "fast-xml-parser@^5.0.7": "^5.7.0",
+    "@module-federation/dts-plugin/adm-zip": "^0.6.1",
+    "@module-federation/dts-plugin/undici": "^7.29.1"
+  },
+  "prettier": "@backstage/cli/config/prettier",
+  "packageManager": "yarn@4.4.1",
+  "backstage": {
+    "cli": {
+      "new": {
+        "globals": {
+          "license": "Apache-2.0",
+          "private": false,
+          "namePrefix": "@stepstone-tech/",
+          "namePluginInfix": "backstage-plugin-"
+        }
+      }
+    }
+  }
+}

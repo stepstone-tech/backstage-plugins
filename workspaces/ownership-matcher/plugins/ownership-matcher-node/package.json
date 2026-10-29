@@ -1,0 +1,66 @@
+{
+  "name": "@stepstone-tech/backstage-plugin-ownership-matcher-node",
+  "version": "0.1.0",
+  "license": "Apache-2.0",
+  "description": "Node library for building ownership-matcher backend modules",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./testUtils": "./src/testUtils/index.ts",
+    "./package.json": "./package.json"
+  },
+  "typesVersions": {
+    "*": {
+      "testUtils": [
+        "src/testUtils/index.ts"
+      ],
+      "package.json": [
+        "package.json"
+      ]
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "backstage": {
+    "role": "node-library",
+    "pluginId": "ownership-matcher",
+    "pluginPackages": [
+      "@stepstone-tech/backstage-plugin-ownership-matcher",
+      "@stepstone-tech/backstage-plugin-ownership-matcher-backend",
+      "@stepstone-tech/backstage-plugin-ownership-matcher-common",
+      "@stepstone-tech/backstage-plugin-ownership-matcher-node"
+    ]
+  },
+  "sideEffects": false,
+  "scripts": {
+    "build": "backstage-cli package build",
+    "lint": "backstage-cli package lint",
+    "test": "backstage-cli package test",
+    "clean": "backstage-cli package clean",
+    "prepack": "backstage-cli package prepack",
+    "postpack": "backstage-cli package postpack"
+  },
+  "dependencies": {
+    "@backstage/backend-plugin-api": "^1.10.1",
+    "@backstage/catalog-client": "^1.16.2",
+    "@backstage/catalog-model": "^1.10.1",
+    "@backstage/config": "^1.3.9",
+    "@backstage/errors": "^1.3.1",
+    "@backstage/integration": "^2.1.2",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@backstage/backend-test-utils": "^1.11.7",
+    "@backstage/cli": "^0.36.6"
+  },
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stepstone-tech/backstage-plugins.git",
+    "directory": "workspaces/ownership-matcher/plugins/ownership-matcher-node"
+  }
+}
