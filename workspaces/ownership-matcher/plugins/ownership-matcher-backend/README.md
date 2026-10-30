@@ -92,6 +92,8 @@ Base path `/api/ownership-matcher`.
 | POST   | `/entities/:id/escalation/retrigger`                                 | fallback actors                                                   |
 | GET    | `/escalation/manager-chain?ref=`                                     | admin                                                             |
 
+The `/leadership/*` routes accept `?asUser=<entityRef>` to resolve a different identity, but only when `ownershipMatcher.dangerouslyAllowAsUserOverride` is set — off by default, local development only. See [Configuration](docs/configuration.md#dangerouslyallowasuseroverride).
+
 Escalation endpoints exist only when `escalation` is configured. The UI uses only `assign` and `archive`; `suggest` and `reject` are API-only (see [Escalation](docs/escalation.md#actor-decisions)).
 
 ## Development

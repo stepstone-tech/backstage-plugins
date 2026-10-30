@@ -351,6 +351,10 @@ async function buildApp(store, opts = {}) {
     escalationTrigger,
     checks: [],
     strategies: [],
+    // Default off, matching a stock deployment. jest sets NODE_ENV=test, so
+    // before this flag existed the `?asUser=` override was live in every test
+    // here and nothing asserted otherwise.
+    allowAsUserOverride: opts.allowAsUserOverride ?? false,
   });
 
   const app = express().use(router).use(mockErrorHandler());
@@ -838,5 +842,170 @@ describe('leadership — escalations assigned via resolved_actor_ref', () => {
 
     const stats = await request(app).get('/leadership/stats');
     expect(stats.body).toMatchObject({ isLeader: true, totalOpen: 3 });
+  });
+});
+
+// ─── asUser identity override ─────────────────────────────────────────────────
+
+/**
+ * `/leadership/*` is the only route group that skips `assertAdmin` — it
+ * substitutes identity scoping for a permission check, and `?asUser=` *is* that
+ * scoping. So the override is an authorisation boundary, not a view preference.
+ *
+ * It used to be gated on `process.env.NODE_ENV !== 'production'`, which is
+ * default-allow: Node leaves NODE_ENV unset, and this is a published plugin, so
+ * the variable is set by a consumer's Dockerfile or Helm chart. It is now gated
+ * on `ownershipMatcher.dangerouslyAllowAsUserOverride`, default false.
+ *
+ * These tests inject the flag rather than mutating `process.env` — env mutation
+ * would make them order-dependent, and jest pins NODE_ENV=test regardless.
+ */
+describe('?asUser= identity override', () => {
+  const OTHER_USER = 'user:default/someone-else';
+
+  /** Seeds one entity owned by alice's team and one owned by an unrelated team. */
+  async function seedTwoTeams(store) {
+    await store.createEntity({
+      entity_ref: 'c:d/mine',
+      entity_name: 'mine',
+      entity_kind: 'Component',
+      entity_namespace: 'default',
+      current_owner: TEAM_REF,
+      current_check: 'orphaned',
+    });
+    await store.createEntity({
+      entity_ref: 'c:d/theirs',
+      entity_name: 'theirs',
+      entity_kind: 'Component',
+      entity_namespace: 'default',
+      current_owner: 'group:default/other-team',
+      current_check: 'orphaned',
+    });
+  }
+
+  describe('disabled (default)', () => {
+    it('ignores the param on /leadership/stats and resolves the token user', async () => {
+      const store = createStore();
+      await seedTwoTeams(store);
+      const { app, mockCatalogService } = await buildApp(store);
+
+      const res = await request(app).get(
+        `/leadership/stats?asUser=${encodeURIComponent(OTHER_USER)}`,
+      );
+
+      expect(res.status).toBe(200);
+      expect(mockCatalogService.getEntityByRef).toHaveBeenCalledWith(
+        'user:default/alice',
+      );
+      expect(mockCatalogService.getEntityByRef).not.toHaveBeenCalledWith(
+        OTHER_USER,
+      );
+      // Scoped to alice's subtree, not the param's.
+      expect(res.body.totalOpen).toBe(1);
+    });
+
+    it('ignores the param on /leadership/entities', async () => {
+      const store = createStore();
+      await seedTwoTeams(store);
+      const { app, mockCatalogService } = await buildApp(store);
+
+      const res = await request(app).get(
+        `/leadership/entities?asUser=${encodeURIComponent(OTHER_USER)}`,
+      );
+
+      expect(res.status).toBe(200);
+      expect(mockCatalogService.getEntityByRef).toHaveBeenCalledWith(
+        'user:default/alice',
+      );
+      expect(res.body.items.map(i => i.entity_name)).toEqual(['mine']);
+    });
+
+    it('ignores the param on /leadership/proposals', async () => {
+      const store = createStore();
+      const entityId = await store.createEntity({
+        entity_ref: 'c:d/mine',
+        entity_name: 'mine',
+        entity_kind: 'Component',
+        entity_namespace: 'default',
+        current_owner: TEAM_REF,
+        current_check: 'orphaned',
+      });
+      await store.createProposal({
+        entity_id: entityId,
+        proposed_owner_ref: TEAM_REF,
+        status: 'pending',
+      });
+      const { app, mockCatalogService } = await buildApp(store);
+
+      const res = await request(app).get(
+        `/leadership/proposals?asUser=${encodeURIComponent(OTHER_USER)}`,
+      );
+
+      expect(res.status).toBe(200);
+      expect(mockCatalogService.getEntityByRef).toHaveBeenCalledWith(
+        'user:default/alice',
+      );
+      expect(mockCatalogService.getEntityByRef).not.toHaveBeenCalledWith(
+        OTHER_USER,
+      );
+    });
+
+    it('does not let the param spoof escalationActorRef', async () => {
+      // /leadership/entities passes escalationActorRef: userEntityRef, so a
+      // spoofable identity would enumerate escalations assigned to any person.
+      const store = createStore();
+      await seedEscalated(store, 'routed-to-me', { actorRef: DIRECTOR_REF });
+      await seedEscalated(store, 'routed-to-them', { actorRef: OTHER_USER });
+      const { app } = await buildApp(store);
+
+      const res = await request(app).get(
+        `/leadership/entities?status=escalated&asUser=${encodeURIComponent(
+          OTHER_USER,
+        )}`,
+      );
+
+      expect(res.status).toBe(200);
+      expect(res.body.items.map(i => i.entity_name)).toEqual(['routed-to-me']);
+    });
+  });
+
+  describe('enabled', () => {
+    it('honours the param when the config flag is set', async () => {
+      // The dev aid must still work — proving the fix gated it rather than
+      // silently killing it.
+      const store = createStore();
+      await seedEscalated(store, 'routed-to-them', { actorRef: OTHER_USER });
+      const { app, mockCatalogService } = await buildApp(store, {
+        allowAsUserOverride: true,
+      });
+
+      const res = await request(app).get(
+        `/leadership/entities?status=escalated&asUser=${encodeURIComponent(
+          OTHER_USER,
+        )}`,
+      );
+
+      expect(res.status).toBe(200);
+      expect(mockCatalogService.getEntityByRef).toHaveBeenCalledWith(
+        OTHER_USER,
+      );
+      expect(res.body.items.map(i => i.entity_name)).toEqual([
+        'routed-to-them',
+      ]);
+    });
+
+    it('falls back to the token user when the param is absent', async () => {
+      const store = createStore();
+      const { app, mockCatalogService } = await buildApp(store, {
+        allowAsUserOverride: true,
+      });
+
+      const res = await request(app).get('/leadership/stats');
+
+      expect(res.status).toBe(200);
+      expect(mockCatalogService.getEntityByRef).toHaveBeenCalledWith(
+        'user:default/alice',
+      );
+    });
   });
 });

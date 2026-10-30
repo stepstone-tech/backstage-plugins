@@ -466,3 +466,37 @@ describe('readPrCreationConfig', () => {
     expect(() => readPrCreationConfig(config)).toThrow(/mergeGraceHours/);
   });
 });
+
+describe('readOwnershipMatcherConfig — dangerouslyAllowAsUserOverride', () => {
+  // This flag is the whole `?asUser=` trust boundary, so pin the default
+  // explicitly: anything other than a literal `false` here fails open.
+  it('defaults to false when the whole ownershipMatcher section is omitted', () => {
+    const result = readOwnershipMatcherConfig(new ConfigReader({}));
+    expect(result.dangerouslyAllowAsUserOverride).toBe(false);
+  });
+
+  it('defaults to false when the key is omitted', () => {
+    const config = new ConfigReader({ ownershipMatcher: {} });
+    expect(
+      readOwnershipMatcherConfig(config).dangerouslyAllowAsUserOverride,
+    ).toBe(false);
+  });
+
+  it('reads true', () => {
+    const config = new ConfigReader({
+      ownershipMatcher: { dangerouslyAllowAsUserOverride: true },
+    });
+    expect(
+      readOwnershipMatcherConfig(config).dangerouslyAllowAsUserOverride,
+    ).toBe(true);
+  });
+
+  it('reads false', () => {
+    const config = new ConfigReader({
+      ownershipMatcher: { dangerouslyAllowAsUserOverride: false },
+    });
+    expect(
+      readOwnershipMatcherConfig(config).dangerouslyAllowAsUserOverride,
+    ).toBe(false);
+  });
+});

@@ -92,6 +92,8 @@ ownershipMatcher:
       frequency: { months: 1 }
       timeout: { minutes: 30 }
       initialDelay: { minutes: 5 }
+
+  dangerouslyAllowAsUserOverride: false
 ```
 
 ## Keys
@@ -223,3 +225,15 @@ Omit the block to disable the email digest. See [Notifications](notifications.md
 | `schedule` | monthly, 30 min timeout, 5 min delay | Digest task schedule. If set, `frequency` and `timeout` are required. |
 
 Transport settings belong to the sender module, e.g. `email.msgraph` for the Microsoft Graph module. The digest also requires `app.baseUrl` and uses `app.title` for branding.
+
+### `dangerouslyAllowAsUserOverride`
+
+| Key                              | Default | Description                                                     |
+| -------------------------------- | ------- | --------------------------------------------------------------- |
+| `dangerouslyAllowAsUserOverride` | `false` | Allow `?asUser=<entityRef>` to override the caller on `/leadership/*`. |
+
+**Local development only.** With it on, `GET /leadership/stats`, `/leadership/entities` and `/leadership/proposals` resolve the identity from the `asUser` query parameter instead of the caller's token.
+
+Those three routes are the only ones that do not call `assertAdmin` — they substitute identity scoping for a permission check, so the resolved identity *is* the authorisation boundary. Enabling this lets any authenticated user pick a ref whose job title matches the escalation `titlePatterns`, expand that person's whole group subtree, and read org-wide ownership data that otherwise requires `ownershipMatcherAdminPermission`. Write paths are unaffected — they always read the identity from the token.
+
+The backend logs a warning at startup whenever it is enabled. Set it in a gitignored `app-config.local.yaml`, never in a deployed config.
