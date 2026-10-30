@@ -36,7 +36,6 @@
     ]
   },
   "dependencies": {
-    "@backstage/backend-defaults": "^0.18.0",
     "@backstage/backend-plugin-api": "^1.10.1",
     "@backstage/catalog-client": "^1.16.2",
     "@backstage/catalog-model": "^1.10.1",
@@ -55,9 +54,10 @@
     "handlebars": "^4.7.8",
     "knex": "^3.1.0",
     "yaml": "^2.8.2",
-    "zod": "^3.25.76"
+    "zod": "^4.6.6"
   },
   "devDependencies": {
+    "@backstage/backend-defaults": "^0.18.0",
     "@backstage/backend-test-utils": "^1.11.7",
     "@backstage/cli": "^0.36.6",
     "@backstage/plugin-auth-backend": "^0.30.1",
