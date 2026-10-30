@@ -1,0 +1,19 @@
+name: backstage-plugins
+# Postgres for the development backend, started by `yarn start`. ownership-matcher's
+# migrations use Postgres-only features, so SQLite isn't an option.
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    # `docker compose up --wait` (run by `yarn start`) waits for this, so the
+    # backend doesn't start before Postgres accepts connections.
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres -h 127.0.0.1']
+      interval: 2s
+      timeout: 3s
+      retries: 30
+    # Local only: the credentials above are for development.
+    ports:
+      - 127.0.0.1:54321:5432

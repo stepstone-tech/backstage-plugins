@@ -1,0 +1,9 @@
+dist
+dist-types
+dist-packages
+coverage
+.vscode
+.yarn
+CHANGELOG.md
+**/templates/**/*.hbs
+workspaces/*/plugins/*/docs

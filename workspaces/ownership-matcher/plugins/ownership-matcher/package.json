@@ -1,0 +1,93 @@
+{
+  "name": "@stepstone-tech/backstage-plugin-ownership-matcher",
+  "version": "0.1.0",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "license": "Apache-2.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./alpha": "./src/alpha.tsx",
+    "./package.json": "./package.json"
+  },
+  "typesVersions": {
+    "*": {
+      "alpha": [
+        "src/alpha.tsx"
+      ],
+      "package.json": [
+        "package.json"
+      ]
+    }
+  },
+  "backstage": {
+    "role": "frontend-plugin",
+    "pluginId": "ownership-matcher",
+    "pluginPackages": [
+      "@stepstone-tech/backstage-plugin-ownership-matcher",
+      "@stepstone-tech/backstage-plugin-ownership-matcher-backend",
+      "@stepstone-tech/backstage-plugin-ownership-matcher-common",
+      "@stepstone-tech/backstage-plugin-ownership-matcher-node"
+    ]
+  },
+  "sideEffects": false,
+  "scripts": {
+    "start": "backstage-cli package start",
+    "build": "backstage-cli package build",
+    "lint": "backstage-cli package lint",
+    "test": "backstage-cli package test",
+    "clean": "backstage-cli package clean",
+    "prepack": "backstage-cli package prepack",
+    "postpack": "backstage-cli package postpack"
+  },
+  "dependencies": {
+    "@backstage/catalog-model": "^1.10.1",
+    "@backstage/core-compat-api": "^0.5.15",
+    "@backstage/core-components": "^0.18.14",
+    "@backstage/core-plugin-api": "^1.12.10",
+    "@backstage/frontend-plugin-api": "^0.18.1",
+    "@backstage/plugin-catalog-react": "^3.2.3",
+    "@backstage/plugin-permission-common": "^0.9.11",
+    "@backstage/plugin-permission-react": "^0.5.5",
+    "@backstage/plugin-signals-react": "^0.0.26",
+    "@material-ui/core": "^4.9.13",
+    "@material-ui/icons": "^4.9.1",
+    "@material-ui/lab": "^4.0.0-alpha.61",
+    "@tanstack/react-query": "^5.0.0",
+    "@types/react": "^18.0.0 || ^19.0.0",
+    "dayjs": "^1.11.20"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0",
+    "react-router-dom": "6.0.0-beta.0 || ^6.3.0"
+  },
+  "devDependencies": {
+    "@backstage/cli": "^0.36.6",
+    "@backstage/dev-utils": "^1.1.27",
+    "@backstage/frontend-dev-utils": "^0.1.6",
+    "@backstage/plugin-catalog": "^2.0.9",
+    "@backstage/plugin-notifications": "^0.6.0",
+    "@backstage/plugin-org": "^0.7.9",
+    "@backstage/plugin-signals": "^0.0.35",
+    "@backstage/test-utils": "^1.7.22",
+    "@testing-library/dom": "^10.0.0",
+    "@testing-library/jest-dom": "^6.0.0",
+    "@testing-library/react": "^16.0.0",
+    "react": "^18.0.2",
+    "react-dom": "^18.0.2",
+    "react-router-dom": "^6.21.1"
+  },
+  "files": [
+    "dist",
+    "config.d.ts"
+  ],
+  "configSchema": "config.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stepstone-tech/backstage-plugins.git",
+    "directory": "workspaces/ownership-matcher/plugins/ownership-matcher"
+  }
+}

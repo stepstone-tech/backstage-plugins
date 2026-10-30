@@ -1,0 +1,51 @@
+# Configuration for `yarn start` (the plugins' dev/ entry points). Not used by the
+# published packages. `yarn start` also loads app-config.local.yaml next to this
+# file if it exists (gitignored), for local overrides.
+app:
+  title: ownership-matcher dev app
+  baseUrl: http://localhost:3000
+
+organization:
+  name: Development
+
+backend:
+  baseUrl: http://localhost:7007
+  # Loopback only: guest sign-in and the allow-all permission policy make
+  # this backend open to anyone who can reach it.
+  listen:
+    host: 127.0.0.1
+    port: 7007
+  csp:
+    connect-src: ["'self'", 'http:', 'https:']
+  cors:
+    origin: http://localhost:3000
+    methods: [GET, HEAD, PATCH, POST, PUT, DELETE]
+    credentials: true
+  database:
+    client: pg
+    connection:
+      host: 127.0.0.1
+      port: 54321
+      user: postgres
+      password: postgres
+
+auth:
+  providers:
+    guest: {}
+
+permission:
+  enabled: true
+
+catalog:
+  rules:
+    - allow: [Component, System, API, Resource, Location, User, Group]
+  locations:
+    - type: file
+      target: ../../examples/entities.yaml
+    - type: file
+      target: ../../examples/org.yaml
+
+ownershipMatcher:
+  checks:
+    orphaned:
+      placeholderValues: [unknown]

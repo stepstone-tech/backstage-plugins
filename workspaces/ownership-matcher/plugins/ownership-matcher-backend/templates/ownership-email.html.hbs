@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{appTitle}} Ownership Review</title>
+    <style>
+      body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f5f7;
+        margin: 0;
+        padding: 0;
+        color: #172b4d;
+      }
+      .container {
+        max-width: 640px;
+        margin: 24px auto;
+        background-color: #ffffff;
+        padding: 40px;
+        border-radius: 8px;
+        border: 1px solid #dfe1e6;
+      }
+      .header {
+        border-bottom: 2px solid #0052cc;
+        padding-bottom: 20px;
+        margin-bottom: 24px;
+      }
+      .header h2 { color: #0052cc; margin: 0 0 4px 0; font-size: 20px; }
+      .header p { margin: 0; color: #6b778c; font-size: 13px; }
+      .callout {
+        background-color: #fff0b3;
+        border-left: 4px solid #ff991f;
+        padding: 12px 16px;
+        border-radius: 4px;
+        margin-bottom: 24px;
+        font-size: 14px;
+      }
+      .cta-btn {
+        display: inline-block;
+        background-color: #0052cc;
+        color: #ffffff !important;
+        text-decoration: none;
+        padding: 12px 24px;
+        border-radius: 4px;
+        font-weight: bold;
+        font-size: 15px;
+        margin: 8px 0 24px 0;
+      }
+      .section-title {
+        font-size: 15px;
+        font-weight: bold;
+        color: #172b4d;
+        margin: 24px 0 8px 0;
+        border-bottom: 1px solid #ebecf0;
+        padding-bottom: 6px;
+      }
+      table.breakdown {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+        margin-bottom: 16px;
+      }
+      table.breakdown th {
+        background-color: #f4f5f7;
+        text-align: left;
+        padding: 8px 10px;
+        color: #6b778c;
+        font-weight: normal;
+        border-bottom: 2px solid #dfe1e6;
+      }
+      table.breakdown td {
+        padding: 8px 10px;
+        border-bottom: 1px solid #ebecf0;
+      }
+      table.breakdown td.count {
+        text-align: right;
+        font-weight: bold;
+        color: #172b4d;
+      }
+      .glossary { background-color: #f4f5f7; border-radius: 4px; padding: 14px 16px; font-size: 13px; margin-bottom: 24px; }
+      .glossary dt { font-weight: bold; margin-top: 8px; }
+      .glossary dd { margin: 2px 0 0 0; color: #6b778c; }
+      .footer {
+        margin-top: 32px;
+        font-size: 12px;
+        color: #6b778c;
+        text-align: center;
+        border-top: 1px solid #dfe1e6;
+        padding-top: 20px;
+      }
+      a { color: #0052cc; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h2>{{appTitle}}: Ownership Issues to Review</h2>
+        <p>Catalog health digest &mdash; {{periodLabel}}</p>
+      </div>
+
+      <p>Hello <strong>{{teamName}}</strong>,</p>
+
+      <p>
+        Your team has <strong>{{totalCount}} {{#if (eq totalCount 1)}}entity{{else}}entities{{/if}}</strong>
+        in the {{appTitle}} catalog with outstanding ownership issues. Keeping catalog data accurate
+        helps the platform route alerts, route incident escalations, and support discovery correctly.
+      </p>
+
+      <div class="callout">
+        <strong>Action required:</strong> Please review and resolve the ownership issues listed below.
+      </div>
+
+      <a class="cta-btn" href="{{queueUrl}}">Review your team's ownership queue &rarr;</a>
+
+      <div class="section-title">Breakdown by issue type</div>
+      <table class="breakdown">
+        <thead>
+          <tr>
+            <th>Issue type</th>
+            <th style="text-align:right">Count</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each checkBreakdown}}
+          <tr>
+            <td>{{this.title}}</td>
+            <td class="count">{{this.count}}</td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+
+      <div class="section-title">Breakdown by entity kind</div>
+      <table class="breakdown">
+        <thead>
+          <tr>
+            <th>Kind</th>
+            <th style="text-align:right">Count</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each kindBreakdown}}
+          <tr>
+            <td>{{this.kind}}</td>
+            <td class="count">{{this.count}}</td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+
+      <div class="section-title">What do these issue types mean?</div>
+      <dl class="glossary">
+        <dt>No owner (orphaned)</dt>
+        <dd>The catalog YAML for this entity has no <code>spec.owner</code> set, or it is set to a placeholder value like <code>unknown</code>. Add your team as the owner in the entity YAML.</dd>
+        <dt>Dissolved team (zombie)</dt>
+        <dd>The <code>spec.owner</code> references a group or user that no longer exists in the catalog. Update the entity YAML to point to an active team.</dd>
+      </dl>
+
+      {{#if supportUrl}}
+      <p>
+        Need help? Reach out via
+        <a href="{{supportUrl}}">{{appTitle}} support</a>.
+      </p>
+      {{/if}}
+
+      <p>Best regards,<br />The {{appTitle}} Team</p>
+
+      <div class="footer">
+        <p>
+          This is an automated digest from
+          <a href="{{appBaseUrl}}">{{appTitle}}</a>.
+          You are receiving this because your team has entities with open ownership cases.
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

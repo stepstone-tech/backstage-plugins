@@ -1,0 +1,32 @@
+# Sample catalog for the development backend. The components cover the
+# cases ownership-matcher looks at: a valid owner, an owner that doesn't exist
+# in the catalog and a placeholder owner.
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: owned-service
+  description: Owned by a team that exists in the catalog
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/team-example
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: orphaned-service
+  description: Owned by a team that doesn't exist in the catalog
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/team-that-was-disbanded
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: placeholder-owner-library
+  description: Owned by a placeholder value
+spec:
+  type: library
+  lifecycle: experimental
+  owner: unknown
