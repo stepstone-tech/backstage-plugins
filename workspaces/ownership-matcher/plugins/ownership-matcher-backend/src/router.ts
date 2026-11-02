@@ -124,6 +124,7 @@ export async function createRouter({
   checks,
   strategies,
   ownershipEmailTask,
+  allowAsUserOverride,
 }: {
   httpAuth: HttpAuthService;
   userInfo: UserInfoService;
@@ -144,6 +145,12 @@ export async function createRouter({
   strategies: ProposalStrategy[];
   /** When provided, enables the POST /email-digest/trigger admin endpoint. */
   ownershipEmailTask?: OwnershipEmailTask;
+  /**
+   * Enables the `?asUser=` identity override on `/leadership/*`. Local
+   * development only — see `ownershipMatcher.dangerouslyAllowAsUserOverride`.
+   * Omitted means off.
+   */
+  allowAsUserOverride?: boolean;
 }): Promise<express.Router> {
   const router = Router();
   router.use(express.json());
@@ -182,6 +189,14 @@ export async function createRouter({
   }
 
   const { isAdmin, assertAdmin } = createAdminAuth({ httpAuth, permissions });
+
+  // Resolved once, here, so the `?asUser=` trust boundary is a single auditable
+  // line rather than a per-request check. Deliberately not derived from
+  // `process.env.NODE_ENV`: this is a published plugin, so that variable is set
+  // by a consumer's Dockerfile or Helm chart we never review, and Node leaves
+  // it unset by default — an env-derived gate fails open. Strict `=== true` so
+  // a truthy non-boolean can't open it.
+  const asUserEnabled = allowAsUserOverride === true;
 
   // ── Stats ──────────────────────────────────────────────────────────────────
 
@@ -616,6 +631,11 @@ export async function createRouter({
    *
    * A user who currently holds an active escalation is also a leader (no
    * subtree expansion), so they can reach the cases routed to them.
+   *
+   * `?asUser=<entityRef>` overrides the identity resolved from the token, but
+   * only when `ownershipMatcher.dangerouslyAllowAsUserOverride` is set. It is
+   * off by default: these are the only routes that skip `assertAdmin`, so the
+   * identity resolved here *is* the authorisation boundary.
    */
   async function resolveManagedGroupRefs(req: express.Request): Promise<{
     groupRefs: string[];
@@ -628,10 +648,9 @@ export async function createRouter({
       credentials,
     );
 
-    const asUserParam =
-      process.env.NODE_ENV !== 'production'
-        ? (req.query.asUser as string | undefined)
-        : undefined;
+    const asUserParam = asUserEnabled
+      ? (req.query.asUser as string | undefined)
+      : undefined;
     const userEntityRef = asUserParam ?? tokenUserRef;
 
     // Escalations are routed along the AD manager chain, not the catalog group

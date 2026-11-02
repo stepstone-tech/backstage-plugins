@@ -195,6 +195,13 @@ export function readOwnershipMatcherConfig(
       notifCfg?.getOptionalNumber('acceptancePendingReminderDays') ?? 7,
   };
 
+  // ── asUser override ────────────────────────────────────────────────────────
+  // Default-deny: the override is a local-development aid that bypasses the
+  // admin gate on /leadership/*, so an operator has to ask for it by name. The
+  // `?? false` is load-bearing — never let this resolve to `undefined`.
+  const dangerouslyAllowAsUserOverride =
+    root?.getOptionalBoolean('dangerouslyAllowAsUserOverride') ?? false;
+
   return {
     schedule,
     filters,
@@ -203,6 +210,7 @@ export function readOwnershipMatcherConfig(
     proposals,
     contributors,
     notifications,
+    dangerouslyAllowAsUserOverride,
   };
 }
 

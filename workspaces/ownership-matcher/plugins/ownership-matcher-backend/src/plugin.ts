@@ -213,6 +213,17 @@ export const ownershipMatcherPlugin = createBackendPlugin({
         const pluginConfig = readOwnershipMatcherConfig(config);
         const catalogConventions = readCatalogConventions(config);
 
+        // Warn once at startup rather than per request: a per-request warning
+        // is a log-flood vector, and it's a misconfigured deployment — not a
+        // single call — that this needs to catch.
+        if (pluginConfig.dangerouslyAllowAsUserOverride) {
+          logger.warn(
+            'Ownership matcher: the ?asUser= identity override is ENABLED. Any authenticated ' +
+              "user can read any other user's managed subtree via /leadership/*, bypassing the " +
+              'admin permission gate. Never enable it outside local development.',
+          );
+        }
+
         // ── Infrastructure ──────────────────────────────────────────────────
         const store = await DatabaseOwnershipStore.create({ database });
         const catalogClient = new CatalogClient({
@@ -555,6 +566,7 @@ export const ownershipMatcherPlugin = createBackendPlugin({
             checks,
             strategies: orderedStrategies,
             ownershipEmailTask,
+            allowAsUserOverride: pluginConfig.dangerouslyAllowAsUserOverride,
           }),
         );
         // No unauthenticated auth policies: auth policies match by path

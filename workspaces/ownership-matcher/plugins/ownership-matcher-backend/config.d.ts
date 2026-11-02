@@ -317,5 +317,13 @@ export interface Config {
         writeToken?: string;
       }>;
     };
+    /**
+     * Allow `?asUser=<entityRef>` on `/leadership/*` to override the caller's
+     * identity. A local-development aid: with it on, any authenticated user can
+     * read any other user's managed subtree, bypassing the admin permission
+     * gate those routes otherwise substitute identity scoping for. Never enable
+     * it outside local development. Default false.
+     */
+    dangerouslyAllowAsUserOverride?: boolean;
   };
 }

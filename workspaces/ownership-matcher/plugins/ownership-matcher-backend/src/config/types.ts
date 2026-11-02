@@ -155,4 +155,10 @@ export interface OwnershipMatcherConfig {
   contributors: ContributorsConfig;
   /** Escalation config is read separately via `readEscalationConfig` and is not part of the top-level config. */
   notifications: NotificationsConfig;
+  /**
+   * Whether `?asUser=` may override the caller's identity on `/leadership/*`.
+   * Local-development aid, off unless explicitly configured — see
+   * `ownershipMatcher.dangerouslyAllowAsUserOverride`.
+   */
+  dangerouslyAllowAsUserOverride: boolean;
 }
