@@ -1,0 +1,10 @@
+# orphaned check fails. Third kind on the Unresolved tab, so its `kind` facet
+# shows three chips with a count above one.
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: analytics-bucket
+  description: Placeholder owner and no parent system
+spec:
+  type: s3-bucket
+  owner: unknown

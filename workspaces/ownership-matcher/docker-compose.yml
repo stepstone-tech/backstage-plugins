@@ -1,5 +1,5 @@
 name: backstage-plugins
-# Postgres for the development backend, started by `yarn start`. ownership-matcher's
+# Postgres for packages/backend, started by this workspace's `yarn start`. ownership-matcher's
 # migrations use Postgres-only features, so SQLite isn't an option.
 services:
   db:
@@ -7,7 +7,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-    # `docker compose up --wait` (run by `yarn start`) waits for this, so the
+    # `docker compose up --wait` (run by scripts/start.js) waits for this, so the
     # backend doesn't start before Postgres accepts connections.
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U postgres -h 127.0.0.1']

@@ -16,40 +16,22 @@
  */
 
 /*
- * Local development for one workspace: `yarn start [workspace]`.
+ * `yarn start` for this workspace.
  *
- * Starts the workspace's Postgres (workspaces/<name>/docker-compose.yml, if
- * present), then the dev/ entry points of its plugins with
- * `backstage-cli repo start --plugin <name>`, using the workspace's
- * app-config.yaml and, if it exists, app-config.local.yaml. Passing --config
- * turns off Backstage's own app-config.local.yaml lookup, so it's added here.
+ * Starts the workspace's Postgres (docker-compose.yml), then packages/app and
+ * packages/backend with `backstage-cli repo start`, using this workspace's
+ * app-config.yaml and, if it exists, app-config.local.yaml.
  *
- * The workspace name doubles as the plugin ID that --plugin matches. With a
- * single workspace the argument can be left out.
+ * The wrapper exists for two reasons: ownership-matcher's migrations use
+ * Postgres-only features, so the database has to be up first; and passing
+ * --config turns off Backstage's own app-config.local.yaml lookup, so it has to
+ * be added back here by absolute path.
  */
 const { spawnSync, spawn } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 
-const root = path.resolve(__dirname, '..');
-const workspacesDir = path.join(root, 'workspaces');
-const available = fs
-  .readdirSync(workspacesDir, { withFileTypes: true })
-  .filter(entry => entry.isDirectory())
-  .map(entry => entry.name);
-
-const workspace =
-  process.argv[2] ?? (available.length === 1 ? available[0] : undefined);
-if (!workspace || !available.includes(workspace)) {
-  console.error(
-    `Usage: yarn start <workspace>\nAvailable workspaces: ${available.join(
-      ', ',
-    )}`,
-  );
-  process.exit(1);
-}
-
-const workspaceDir = path.join(workspacesDir, workspace);
+const workspaceDir = path.resolve(__dirname, '..');
 
 const composeFile = path.join(workspaceDir, 'docker-compose.yml');
 if (fs.existsSync(composeFile)) {
@@ -68,11 +50,10 @@ const configArgs = ['app-config.yaml', 'app-config.local.yaml']
   .filter(file => fs.existsSync(file))
   .flatMap(file => ['--config', file]);
 
-const child = spawn(
-  'yarn',
-  ['backstage-cli', 'repo', 'start', '--plugin', workspace, ...configArgs],
-  { cwd: root, stdio: 'inherit' },
-);
+const child = spawn('yarn', ['backstage-cli', 'repo', 'start', ...configArgs], {
+  cwd: workspaceDir,
+  stdio: 'inherit',
+});
 for (const signal of ['SIGINT', 'SIGTERM']) {
   process.on(signal, () => child.kill(signal));
 }

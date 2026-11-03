@@ -1,0 +1,13 @@
+# zombie check fails, and the system owner is the signed-in user's team, so the
+# proposal shows up on the user-facing "Pending" tab. This is the component to
+# accept when walking the accept -> PR -> merge -> closed lifecycle.
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: orphaned-service
+  description: Owned by a team that doesn't exist in the catalog
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/team-that-was-disbanded
+  system: commerce-platform

@@ -1,0 +1,31 @@
+# Root document of the dev catalog. `startDevScmServer` serves a writable
+# copy of this directory over HTTP, and app-config.yaml points
+# `catalog.locations` at this one file; everything else is reached from here.
+#
+# Each top-level directory beside this one is a mock repository, so every
+# component gets its own `catalog-info.yaml` at its own
+# `backstage.io/managed-by-location` — which is what lets the dev SCM provider
+# raise a pull request against one component without rewriting the others.
+#
+# Targets are relative to this file, which lives at
+# /projects/dev/repos/root/browse/root.yaml: `./x` is another file in the root
+# repo, and `../../<repo>/browse/x` is a file in a sibling repo.
+apiVersion: backstage.io/v1alpha1
+kind: Location
+metadata:
+  name: dev-catalog-root
+  description: Every entity the dev app loads
+spec:
+  targets:
+    - ./org.yaml
+    - ./systems.yaml
+    - ../../owned-service/browse/catalog-info.yaml
+    - ../../orphaned-service/browse/catalog-info.yaml
+    - ../../placeholder-owner-library/browse/catalog-info.yaml
+    - ../../docs-portal/browse/catalog-info.yaml
+    - ../../legacy-batch-job/browse/catalog-info.yaml
+    - ../../etl-pipeline/browse/catalog-info.yaml
+    - ../../payments-api/browse/catalog-info.yaml
+    - ../../search-api/browse/catalog-info.yaml
+    - ../../analytics-bucket/browse/catalog-info.yaml
+    - ../../legacy-queue/browse/catalog-info.yaml

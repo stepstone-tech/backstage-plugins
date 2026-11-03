@@ -98,4 +98,4 @@ Escalation endpoints exist only when `escalation` is configured. The UI uses onl
 
 ## Development
 
-Run `yarn start` from the repository root; see the [workspace README](../../README.md#local-development).
+Run `yarn start` from the workspace root; see the [workspace README](../../README.md#local-development).

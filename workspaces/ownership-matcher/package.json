@@ -1,0 +1,24 @@
+{
+  "name": "@internal/ownership-matcher",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Workspace entry point: the ownership-matcher packages and the dev app that runs them",
+  "workspaces": {
+    "packages": [
+      "packages/*",
+      "plugins/*"
+    ]
+  },
+  "scripts": {
+    "start": "node scripts/start.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stepstone-tech/backstage-plugins.git",
+    "directory": "workspaces/ownership-matcher"
+  },
+  "devDependencies": {
+    "@backstage/cli": "^0.36.6",
+    "@backstage/cli-defaults": "^0.1.6"
+  }
+}

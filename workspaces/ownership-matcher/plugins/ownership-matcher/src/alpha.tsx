@@ -21,6 +21,8 @@ import {
   FrontendPlugin,
 } from '@backstage/frontend-plugin-api';
 import { discoveryApiRef, fetchApiRef } from '@backstage/core-plugin-api';
+import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
+import GroupAddIcon from '@material-ui/icons/GroupAdd';
 import {
   compatWrapper,
   convertLegacyRouteRef,
@@ -46,6 +48,8 @@ export const ownershipMatcherApi = ApiBlueprint.make({
 export const ownershipMatcherPage = PageBlueprint.make({
   params: {
     path: '/ownership-matcher',
+    title: 'Ownership Matcher',
+    icon: <AssignmentIndIcon />,
     // Child pages render their own <Page>/<Header>; suppress the redundant
     // new-frontend PluginHeader.
     noHeader: true,
@@ -67,6 +71,8 @@ export const userOwnershipPage = PageBlueprint.make({
   name: 'user-proposals',
   params: {
     path: '/my-ownership-proposals',
+    title: 'My Ownership Proposals',
+    icon: <GroupAddIcon />,
     // Component renders its own <Page>/<Header>; suppress the redundant
     // new-frontend PluginHeader.
     noHeader: true,

@@ -1,0 +1,12 @@
+# Passes every check: the control case that proves a healthy entity is not
+# flagged.
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: owned-service
+  description: Owned by a team that exists in the catalog
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/team-example
+  system: commerce-platform

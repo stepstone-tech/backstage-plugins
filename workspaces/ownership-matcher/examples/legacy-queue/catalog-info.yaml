@@ -1,0 +1,9 @@
+# zombie check fails.
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: legacy-queue
+  description: Owned by a team that doesn't exist in the catalog
+spec:
+  type: queue
+  owner: group:default/team-that-was-disbanded

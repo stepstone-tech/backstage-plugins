@@ -1,0 +1,12 @@
+# orphaned check fails, and the proposal goes to the other team — visible on
+# the admin "Proposals" tab. Rejecting it escalates up to dept-example.
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: placeholder-owner-library
+  description: Owned by a placeholder value
+spec:
+  type: library
+  lifecycle: experimental
+  owner: unknown
+  system: internal-tools

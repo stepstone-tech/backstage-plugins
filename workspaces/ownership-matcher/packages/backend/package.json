@@ -1,0 +1,41 @@
+{
+  "name": "backend",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Development backend for the ownership-matcher workspace. Not published.",
+  "main": "dist/index.cjs.js",
+  "types": "src/index.ts",
+  "backstage": {
+    "role": "backend"
+  },
+  "scripts": {
+    "start": "backstage-cli package start",
+    "build": "backstage-cli package build",
+    "lint": "backstage-cli package lint",
+    "test": "backstage-cli package test --runInBand --forceExit",
+    "clean": "backstage-cli package clean"
+  },
+  "dependencies": {
+    "@backstage/backend-defaults": "^0.18.0",
+    "@backstage/backend-plugin-api": "^1.10.1",
+    "@backstage/plugin-auth-backend": "^0.30.1",
+    "@backstage/plugin-auth-backend-module-guest-provider": "^0.2.23",
+    "@backstage/plugin-catalog-backend": "^4.0.0",
+    "@backstage/plugin-events-backend": "^0.6.6",
+    "@backstage/plugin-notifications-backend": "^0.6.9",
+    "@backstage/plugin-permission-backend": "^0.7.16",
+    "@backstage/plugin-permission-backend-module-allow-all-policy": "^0.2.23",
+    "@backstage/plugin-signals-backend": "^0.3.19",
+    "@stepstone-tech/backstage-plugin-ownership-matcher-backend": "workspace:^",
+    "@stepstone-tech/backstage-plugin-ownership-matcher-node": "workspace:^",
+    "pg": "^8.11.3"
+  },
+  "devDependencies": {
+    "@backstage/backend-test-utils": "^1.11.7",
+    "@backstage/cli": "^0.36.6",
+    "yaml": "^2.8.2"
+  },
+  "files": [
+    "dist"
+  ]
+}

@@ -1,0 +1,27 @@
+# The systems the components belong to. They live in the root repo rather than
+# in a component's, because `org-proximity` reads the *system's* owner to find
+# a candidate — without a system owner it finds none, every case goes straight
+# to `unresolved`, and the proposal-driven views stay empty.
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: commerce-platform
+  description: Owned by the signed-in user's team
+spec:
+  owner: group:default/team-example
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: internal-tools
+  description: Owned by a team the signed-in user is not in
+spec:
+  owner: group:default/team-platform
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: data-platform
+  description: Owned by the signed-in user's *other* team
+spec:
+  owner: group:default/team-data

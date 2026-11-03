@@ -6,7 +6,6 @@
     "node": "22 || 24"
   },
   "scripts": {
-    "start": "node scripts/start.js",
     "tsc": "tsc",
     "tsc:full": "tsc --skipLibCheck false --incremental false",
     "build": "yarn tsc && backstage-cli repo build --all",
@@ -22,6 +21,8 @@
   },
   "workspaces": {
     "packages": [
+      "workspaces/*",
+      "workspaces/*/packages/*",
       "workspaces/*/plugins/*"
     ]
   },

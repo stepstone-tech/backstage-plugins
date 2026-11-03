@@ -66,11 +66,7 @@
   },
   "devDependencies": {
     "@backstage/cli": "^0.36.6",
-    "@backstage/dev-utils": "^1.1.27",
-    "@backstage/frontend-dev-utils": "^0.1.6",
     "@backstage/plugin-catalog": "^2.0.9",
-    "@backstage/plugin-notifications": "^0.6.0",
-    "@backstage/plugin-org": "^0.7.9",
     "@backstage/plugin-signals": "^0.0.35",
     "@backstage/test-utils": "^1.7.22",
     "@testing-library/dom": "^10.0.0",

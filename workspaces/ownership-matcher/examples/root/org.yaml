@@ -1,0 +1,148 @@
+# Sample organization for the development backend. Shaped so `yarn start` has
+# something to show in every view:
+#
+# - `guest` is the signed-in user (auth.providers.guest.userEntityRef in
+#   app-config.yaml points at it). It belongs to two teams, so the `?team=`
+#   selector on the user-facing tabs has something to switch between.
+# - `guest` also sits in dept-example with a job title matching the escalation
+#   `titlePatterns`, which is what makes `/leadership/stats` report
+#   `isLeader: true` and unlocks the "My Teams" and "Escalations" tabs. It
+#   leads dept-example only — `dave` leads dept-operations, so not every
+#   escalation in the catalog is one of yours.
+# - team-platform exists so the admin views show proposals for a team the
+#   signed-in user is *not* in, and so a rejection there escalates up to
+#   dept-example, i.e. to `guest`.
+#
+# `memberOf` is written as a full `group:default/...` ref on purpose:
+# ContributorService only counts memberships in that form, so the short name a
+# hand-written fixture would normally use scores nothing in top-contributor.
+#
+# `alice`, `bob` and `carol` are the commit authors in
+# packages/backend/src/scm/fixtures.ts. None of them is
+# `guest`: `guest` is a member of a department as well, and `top-contributor`
+# counts every group a contributor belongs to, so commits of theirs would
+# propose ownership to a department.
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: dept-example
+  title: Example Department
+spec:
+  type: department
+  children:
+    - team-example
+    - team-platform
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: dept-operations
+  title: Operations Department
+spec:
+  type: department
+  children:
+    - team-data
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: team-example
+  title: Example Team
+spec:
+  type: team
+  parent: dept-example
+  children: []
+  members:
+    - guest
+    - bob
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: team-platform
+  title: Platform Team
+spec:
+  type: team
+  parent: dept-example
+  children: []
+  members:
+    - alice
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: team-data
+  title: Data Team
+spec:
+  type: team
+  parent: dept-operations
+  children: []
+  members:
+    - guest
+    - carol
+---
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: guest
+spec:
+  profile:
+    displayName: Guest User
+    email: guest@example.com
+    # Matched against ownershipMatcher.escalation.levels[].titlePatterns.
+    title: Head of Engineering
+  memberOf:
+    - group:default/team-example
+    - group:default/team-data
+    - group:default/dept-example
+---
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: alice
+spec:
+  profile:
+    displayName: Alice Example
+    email: alice@example.com
+    title: Software Engineer
+  memberOf:
+    - group:default/team-platform
+---
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: bob
+spec:
+  profile:
+    displayName: Bob Example
+    email: bob@example.com
+    title: Software Engineer
+  memberOf:
+    - group:default/team-example
+---
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: carol
+spec:
+  profile:
+    displayName: Carol Example
+    email: carol@example.com
+    title: Data Engineer
+  memberOf:
+    - group:default/team-data
+---
+# Leads the other department, so the escalations raised there are somebody
+# else's — which is what makes the "Escalations" tab a filtered view rather
+# than a list of everything.
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: dave
+spec:
+  profile:
+    displayName: Dave Example
+    email: dave@example.com
+    title: Head of Operations
+  memberOf:
+    - group:default/dept-operations
