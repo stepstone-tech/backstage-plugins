@@ -92,27 +92,23 @@ exports.up = async function up(knex) {
     // reconciliation pass compares the catalog's `spec.owner` with the accepted
     // owner, using `pr_id` to read the PR's state and `pr_checked_at` to
     // throttle itself.
-    table
-      .string('pr_status')
-      .notNullable()
-      .defaultTo('none')
-      .checkIn(
-        [
-          'none',
-          'pending',
-          'raised',
-          'failed',
-          // No installed SCM provider can raise PRs for this repository host.
-          'unsupported_scm',
-          // Catalog owner matches the accepted team.
-          'completed',
-          // PR declined; retryable.
-          'declined',
-          // Someone else changed the owner.
-          'superseded',
-        ],
-        'ownership_entities_pr_status_check',
-      );
+    table.string('pr_status').notNullable().defaultTo('none').checkIn(
+      [
+        'none',
+        'pending',
+        'raised',
+        'failed',
+        // No installed SCM provider can raise PRs for this repository host.
+        'unsupported_scm',
+        // Catalog owner matches the accepted team.
+        'completed',
+        // PR declined; retryable.
+        'declined',
+        // Someone else changed the owner.
+        'superseded',
+      ],
+      'ownership_entities_pr_status_check',
+    );
     table.text('pr_url').nullable();
     table.string('pr_branch').nullable();
     // Failed attempts since the last (re)enqueue.
@@ -152,24 +148,20 @@ exports.up = async function up(knex) {
     table.string('confidence_reason').notNullable();
     table.float('confidence_score').nullable();
     table.integer('proposal_order').notNullable().defaultTo(1);
-    table
-      .string('status')
-      .notNullable()
-      .defaultTo('pending')
-      .checkIn(
-        [
-          'queued',
-          'pending',
-          'accepted',
-          'rejected',
-          'expired',
-          'cancelled',
-          // Candidate below the configured notificationThreshold: offered for
-          // voluntary claiming in the UI instead of being notified.
-          'possible_owner',
-        ],
-        'ownership_proposals_status_check',
-      );
+    table.string('status').notNullable().defaultTo('pending').checkIn(
+      [
+        'queued',
+        'pending',
+        'accepted',
+        'rejected',
+        'expired',
+        'cancelled',
+        // Candidate below the configured notificationThreshold: offered for
+        // voluntary claiming in the UI instead of being notified.
+        'possible_owner',
+      ],
+      'ownership_proposals_status_check',
+    );
     table.integer('escalation_level').notNullable().defaultTo(0);
     table.timestamp('notified_at').nullable();
     table.timestamp('responded_at').nullable();

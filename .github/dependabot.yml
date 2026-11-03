@@ -1,0 +1,13 @@
+version: 2
+updates:
+  # Keeps the action versions in .github/workflows up to date. The npm
+  # dependencies are deliberately left out: this is a Yarn 4 monorepo whose root
+  # package.json carries a long `resolutions` block, and per-package PRs against
+  # it are more churn than they are worth. Bump those with `yarn upgrade` and
+  # the Backstage version bumps instead.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: ci

@@ -1,0 +1,86 @@
+# Branch and pull request checks. Mirrors what CONTRIBUTING.md asks you to run
+# before pushing (`yarn lint`, `yarn tsc`, `yarn test`, `yarn prettier:check`)
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+
+# One run per branch or pull request. A new push supersedes the run in flight.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    name: CI (node ${{ matrix.node-version }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        # package.json engines allow "22 || 24"; .nvmrc pins v24, so that is the
+        # version the checks run on. Add 24.x here to cover both.
+        node-version: [22.x, 24.x]
+
+    env:
+      # `backstage-cli repo test` drops into jest's watch mode without this and
+      # the job would hang until the timeout. Also what the backend's
+      # setupTests.ts reads to let TestDatabases spawn its Postgres container.
+      CI: true
+      NODE_OPTIONS: --max-old-space-size=8192
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # Full history, so `changeset status --since=origin/<base>` below can
+          # diff the branch against the base branch.
+          fetch-depth: 0
+
+      - name: Set up node ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Lint
+        run: yarn lint
+
+      # Plain `tsc`, not `tsc:full`: the latter passes --skipLibCheck false and
+      # then fails inside @testing-library/react's own .d.ts files because
+      # @types/react-dom isn't resolvable from there. That is a dependency
+      # problem, not a problem with this repo's sources.
+      - name: Type check
+        run: yarn tsc
+
+      # The backend's integration tests use Backstage's TestDatabases with
+      # POSTGRES_16, which starts its own Postgres through testcontainers on the
+      # runner's Docker daemon. No `services:` block is needed; set
+      # BACKSTAGE_TEST_DATABASE_POSTGRES16_CONNECTION_STRING here instead if you
+      # ever want to point them at an external database.
+      - name: Test
+        run: yarn test
+
+      - name: Build
+        run: yarn build
+
+      # Runs after the gates above on purpose: formatting is the cheapest thing
+      # to fix and the least interesting failure, so it shouldn't be what hides
+      # a type or test error. `yarn fix` formats whatever this reports. Add
+      # `continue-on-error: true` here if you'd rather it never failed a build.
+      - name: Prettier
+        run: yarn prettier:check
+
+      # Advisory only. `yarn changeset:check` isn't used here
+      - name: Changeset check (advisory)
+        if: github.event_name == 'pull_request'
+        continue-on-error: true
+        run: yarn changeset status --since=origin/${{ github.base_ref }}
