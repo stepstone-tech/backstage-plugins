@@ -36,7 +36,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           # Full history, so `changeset status --since=origin/<base>` below can
           # diff the branch against the base branch.
