@@ -101,6 +101,39 @@ describe('CatalogService', () => {
         }),
       );
     });
+
+    it('maps spec.profile.email when present', async () => {
+      const api = makeCatalogApi([]);
+      (api.getEntities as jest.Mock).mockResolvedValue({
+        items: [
+          {
+            kind: 'User',
+            metadata: { name: 'jane' },
+            spec: {
+              memberOf: ['group:default/team-a'],
+              profile: { email: 'jane@example.com', displayName: 'Jane' },
+            },
+          },
+        ],
+      });
+      const svc = new CatalogService(api, logger);
+
+      await expect(svc.getUserData()).resolves.toEqual([
+        {
+          kind: 'User',
+          metadata: { name: 'jane', annotations: undefined },
+          spec: {
+            memberOf: ['group:default/team-a'],
+            profile: { email: 'jane@example.com' },
+          },
+        },
+      ]);
+      expect(api.getEntities).toHaveBeenCalledWith(
+        expect.objectContaining({
+          fields: expect.arrayContaining(['spec.profile.email']),
+        }),
+      );
+    });
   });
 
   describe('getEntityByRef', () => {

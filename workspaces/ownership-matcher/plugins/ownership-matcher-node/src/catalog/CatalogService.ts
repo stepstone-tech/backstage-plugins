@@ -242,23 +242,36 @@ export class CatalogService implements CatalogServiceExtensions {
     }
   }
 
-  /** Fetches all User entities to resolve email → team membership. */
+  /** Fetches all User entities (name, annotations, memberOf, profile email) to resolve email → team membership. */
   async getUserData(): Promise<CatalogComponent[]> {
     try {
       const response = await this.catalogClient.getEntities({
         filter: { kind: 'User' },
-        fields: ['metadata.name', 'metadata.annotations', 'spec.memberOf'],
+        fields: [
+          'metadata.name',
+          'metadata.annotations',
+          'spec.memberOf',
+          'spec.profile.email',
+        ],
       });
-      return response.items.map(e => ({
-        kind: e.kind,
-        metadata: {
-          name: e.metadata.name,
-          annotations: e.metadata.annotations as
-            | Record<string, string>
-            | undefined,
-        },
-        spec: { memberOf: (e as any).spec?.memberOf },
-      }));
+      return response.items.map(e => {
+        const email = (e as any).spec?.profile?.email;
+        return {
+          kind: e.kind,
+          metadata: {
+            name: e.metadata.name,
+            annotations: e.metadata.annotations as
+              | Record<string, string>
+              | undefined,
+          },
+          spec: {
+            memberOf: (e as any).spec?.memberOf,
+            ...(typeof email === 'string' && email
+              ? { profile: { email } }
+              : {}),
+          },
+        };
+      });
     } catch (error) {
       this.logger.error(
         `CatalogService.getUserData failed: ${

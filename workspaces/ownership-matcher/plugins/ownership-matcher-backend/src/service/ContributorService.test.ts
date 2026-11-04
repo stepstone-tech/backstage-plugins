@@ -33,7 +33,14 @@ function makeConfig(
 }
 
 function makeCatalogService(
-  users: Array<{ name: string; memberOf?: string[]; sam?: string }> = [],
+  users: Array<{
+    name: string;
+    memberOf?: string[];
+    sam?: string;
+    profileEmail?: string;
+    /** Omit `spec.memberOf` entirely. */
+    noMembership?: boolean;
+  }> = [],
 ): CatalogService {
   const items = users.map(u => ({
     kind: 'User',
@@ -41,7 +48,10 @@ function makeCatalogService(
       name: u.name,
       ...(u.sam ? { annotations: { [ALIAS_ANNOTATION]: u.sam } } : {}),
     },
-    spec: { memberOf: u.memberOf ?? [] },
+    spec: {
+      ...(u.noMembership ? {} : { memberOf: u.memberOf ?? [] }),
+      ...(u.profileEmail ? { profile: { email: u.profileEmail } } : {}),
+    },
   }));
   return {
     getUserData: jest.fn().mockResolvedValue(items),
@@ -273,6 +283,89 @@ describe('ContributorService', () => {
       );
 
       expect(await svc.getContributorInfo('nobody01@example.com')).toBeNull();
+    });
+
+    it('matches the full commit email against spec.profile.email case-insensitively', async () => {
+      const catalog = makeCatalogService([
+        {
+          name: 'jdoe',
+          profileEmail: 'Jane.Doe@Example.com',
+          memberOf: ['group:default/team-a'],
+        },
+      ]);
+      const svc = new ContributorService(
+        catalog,
+        logger,
+        makeConfig(),
+        ALIAS_ANNOTATION,
+      );
+
+      expect(await svc.getContributorInfo('jane.doe@example.com')).toEqual({
+        email: 'jane.doe@example.com',
+        teams: ['team-a'],
+      });
+    });
+
+    it('prefers a profile-email match over a name-prefix match on another user', async () => {
+      const catalog = makeCatalogService([
+        { name: 'alice', memberOf: ['group:default/team-name'] },
+        {
+          name: 'a.smith',
+          profileEmail: 'alice@example.com',
+          memberOf: ['group:default/team-email'],
+        },
+      ]);
+      const svc = new ContributorService(
+        catalog,
+        logger,
+        makeConfig(),
+        ALIAS_ANNOTATION,
+      );
+
+      expect(
+        (await svc.getContributorInfo('alice@example.com'))?.teams,
+      ).toEqual(['team-email']);
+    });
+
+    it('falls back to the name-prefix match when the profile email differs', async () => {
+      const catalog = makeCatalogService([
+        {
+          name: 'bob',
+          profileEmail: 'robert@corp.example.com',
+          memberOf: ['group:default/team-b'],
+        },
+      ]);
+      const svc = new ContributorService(
+        catalog,
+        logger,
+        makeConfig(),
+        ALIAS_ANNOTATION,
+      );
+
+      expect((await svc.getContributorInfo('bob@example.com'))?.teams).toEqual([
+        'team-b',
+      ]);
+    });
+
+    it('skips a profile-email match without memberOf so a later match still wins', async () => {
+      const catalog = makeCatalogService([
+        {
+          name: 'ghost',
+          profileEmail: 'carol@example.com',
+          noMembership: true,
+        },
+        { name: 'carol', memberOf: ['group:default/team-c'] },
+      ]);
+      const svc = new ContributorService(
+        catalog,
+        logger,
+        makeConfig(),
+        ALIAS_ANNOTATION,
+      );
+
+      expect(
+        (await svc.getContributorInfo('carol@example.com'))?.teams,
+      ).toEqual(['team-c']);
     });
 
     it('prefers the name-prefix match over a SAM match on another user', async () => {

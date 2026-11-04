@@ -11,7 +11,7 @@ When an entity fails a check, the configured strategies find candidate owner tea
 | `fallback`        | `escalated`: none. `fixed-owner`: the configured `owner`                                     | 0                                 |
 | custom            | Strategies added by modules through `ownershipProposalStrategiesExtensionPoint`              | Set by the strategy               |
 
-Commit authors are matched to users by email local part (or the `userAlias` annotation) and then to their teams. Teams that already rejected the entity are skipped. Authors in `contributors` are ignored.
+Commit authors are matched to users, then to their teams. A user matches if, in this order, their `spec.profile.email` equals the full commit email (case-insensitive), their name matches the email local part (ignoring any `_` suffix), or their `userAlias` annotation equals the local part. Only users with `spec.memberOf` are considered. Teams that already rejected the entity are skipped. Authors in `contributors` are ignored.
 
 ## Combining scores
 

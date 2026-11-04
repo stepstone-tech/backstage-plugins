@@ -83,13 +83,18 @@ async function main() {
       mergeAfterMs: MERGE_AFTER_MS,
     }),
   );
-  // The Bitbucket Server and MS Graph e-mail modules need real credentials, so
+  // The Bitbucket Server, GitLab and MS Graph e-mail modules need real credentials, so
   // they are not installed here. To try one, configure it in the workspace's
   // app-config.local.yaml (gitignored, loaded by `yarn start`), add the package
   // to this package.json and install it:
   // backend.add(
   //   import(
   //     '@stepstone-tech/backstage-plugin-ownership-matcher-backend-module-bitbucket-server'
+  //   ),
+  // );
+  // backend.add(
+  //   import(
+  //     '@stepstone-tech/backstage-plugin-ownership-matcher-backend-module-gitlab'
   //   ),
   // );
 
