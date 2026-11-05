@@ -1,0 +1,15 @@
+# orphaned check fails, no system and no commits: nothing scores it, so it
+# lands on the Unresolved tab as an API rather than a Component.
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: payments-api
+  description: Placeholder owner and no parent system
+spec:
+  type: openapi
+  lifecycle: production
+  owner: unknown
+  definition: |
+    openapi: 3.0.0
+    info: { title: Payments, version: '1.0' }
+    paths: {}

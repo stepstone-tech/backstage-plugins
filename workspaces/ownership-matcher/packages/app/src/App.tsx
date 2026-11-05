@@ -14,21 +14,28 @@
  * limitations under the License.
  */
 
-/*
- * Development app for ownership-matcher, started with `yarn start` at the
- * repository root together with the backend's dev/index.ts. See the workspace
- * README.
- */
-import { createDevApp } from '@backstage/frontend-dev-utils';
+import { createApp } from '@backstage/frontend-defaults';
 import catalogPlugin from '@backstage/plugin-catalog/alpha';
 import notificationsPlugin from '@backstage/plugin-notifications/alpha';
 import orgPlugin from '@backstage/plugin-org/alpha';
 import signalsPlugin from '@backstage/plugin-signals/alpha';
-import plugin from '../src/alpha';
+import ownershipMatcherPlugin from '@stepstone-tech/backstage-plugin-ownership-matcher/alpha';
 
-createDevApp({
+/*
+ * No sign-in page is declared here on purpose. The app plugin already ships
+ * `sign-in-page:app`, which offers the `guest` provider, and `app.extensions`
+ * in app-config.yaml enables it explicitly.
+ *
+ * Do not add a custom one under pluginId 'app': SignInPageBlueprint derives its
+ * extension id from the plugin id, so it collides with the built-in and is
+ * dropped as a duplicate (`EXTENSION_IGNORED`). The app then renders with no
+ * sign-in page at all, every request goes out unauthenticated, and the catalog,
+ * notifications and ownership-matcher all answer 401 — which the UI reports as
+ * "you are not an administrator" rather than as an auth failure.
+ */
+export default createApp({
   features: [
-    plugin,
+    ownershipMatcherPlugin,
     catalogPlugin,
     notificationsPlugin,
     orgPlugin,

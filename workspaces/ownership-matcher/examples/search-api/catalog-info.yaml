@@ -1,0 +1,15 @@
+# zombie check fails this time — the Unresolved tab needs more than one
+# failing check behind the rows, not just more than one kind.
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: search-api
+  description: Owned by a team that doesn't exist in the catalog
+spec:
+  type: openapi
+  lifecycle: experimental
+  owner: group:default/team-that-was-disbanded
+  definition: |
+    openapi: 3.0.0
+    info: { title: Search, version: '1.0' }
+    paths: {}

@@ -1,9 +1,16 @@
-# Configuration for `yarn start` (the plugins' dev/ entry points). Not used by the
-# published packages. `yarn start` also loads app-config.local.yaml next to this
-# file if it exists (gitignored), for local overrides.
+# Configuration for this workspace's `yarn start` (packages/app and
+# packages/backend). Not used by the published packages. scripts/start.js also
+# loads app-config.local.yaml next to this file if it exists (gitignored).
 app:
   title: ownership-matcher dev app
   baseUrl: http://localhost:3000
+  # Enables the app plugin's own sign-in page, which offers the `guest`
+  # provider. Without a sign-in page the app renders with no identity, every
+  # request goes out unauthenticated, and catalog, notifications and
+  # ownership-matcher all answer 401 — which the UI surfaces as "you are not an
+  # administrator" and "you are not a member of any groups".
+  extensions:
+    - sign-in-page:app
 
 organization:
   name: Development
@@ -31,21 +38,70 @@ backend:
 
 auth:
   providers:
-    guest: {}
+    guest:
+      # The provider defaults to user:development/guest, which examples/root/org.yaml
+      # does not define, so sign-in falls back to a token with no group
+      # ownership refs and every "my teams" view renders empty. Point it at the
+      # sample user instead, so the guest inherits group:default/team-example.
+      userEntityRef: user:default/guest
 
 permission:
   enabled: true
 
+# Mock SCM server, not a real one. The dev backend serves a throwaway copy of
+# examples/ on 127.0.0.1:7008 (packages/backend/src/devScmServer.ts), and this
+# entry is what makes two things work at once: Backstage's URL reader can read
+# the catalog files, and ownership-matcher's ScmRegistry can route an entity's
+# managed-by-location to the mock SCM provider registered for this type.
+# Backstage only accepts its built-in integration types, so the mock borrows
+# this one and its URL shape; the key cannot be renamed to something generic.
+# Without an integration for the host the registry short-circuits and no
+# provider is ever consulted.
+integrations:
+  bitbucketServer:
+    - host: 127.0.0.1:7008
+      # Explicit because the default is https://<host>/rest/api/1.0.
+      apiBaseUrl: http://127.0.0.1:7008/rest/api/1.0
+
 catalog:
+  # Dev-only: a merged pull request writes the new owner into the served copy
+  # of examples/, and the case only closes once the catalog has re-read it.
+  # The 10-minute default would leave it looking stuck.
+  processingInterval:
+    seconds: 30
   rules:
     - allow: [Component, System, API, Resource, Location, User, Group]
   locations:
-    - type: file
-      target: ../../examples/entities.yaml
-    - type: file
-      target: ../../examples/org.yaml
+    # Everything else is reached from this one document. The port is fixed by
+    # DEV_SCM_PORT in packages/backend/src/devScmServer.ts.
+    - type: url
+      target: http://127.0.0.1:7008/projects/dev/repos/root/browse/root.yaml
 
 ownershipMatcher:
+  # The dev SCM provider ignores the token, but ScmRegistry only hands a host
+  # config to a provider that has one, and the real providers refuse writes
+  # without it — so the shape is kept honest here.
+  scm:
+    hosts:
+      - host: 127.0.0.1:7008
+        writeToken: dev-token
   checks:
     orphaned:
       placeholderValues: [unknown]
+  proposals:
+    # Documented as "meant for testing": without it a proposal expires after
+    # `expirationDays` and `expired` is unreachable in a sitting. Expiry only
+    # fires on a deadline-checker sweep, so nothing expires behind your back
+    # until the next one runs.
+    autoExpiry: true
+    expirationMinutes: 10
+  # Enabled so the escalation-driven views are reachable: without this key
+  # escalation is off, every case with no candidates goes straight to
+  # unresolved, and /leadership/stats never reports a leader. The title
+  # pattern matches the guest user's spec.profile.title in examples/root/org.yaml.
+  escalation:
+    levels:
+      - groupFilter: Group:department
+        timeoutDays: 7
+        titlePatterns: ['^Head of ']
+    fallbackActors: ['user:default/guest']

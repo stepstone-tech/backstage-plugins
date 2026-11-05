@@ -1,0 +1,13 @@
+# orphaned check fails, and both strategies point at team-data — the signed-in
+# user's *second* team. Accepting here instead of on orphaned-service is what
+# exercises the `?team=` selector on the user-facing tabs.
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: etl-pipeline
+  description: Owned by a placeholder value, committed to by the data team
+spec:
+  type: service
+  lifecycle: production
+  owner: unknown
+  system: data-platform

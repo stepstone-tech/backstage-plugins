@@ -1,0 +1,11 @@
+# No system and no commits, so neither strategy finds a candidate: this is the
+# one that keeps the "Unresolved" tab populated.
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: legacy-batch-job
+  description: Placeholder owner and no parent system, so no candidates are found
+spec:
+  type: service
+  lifecycle: deprecated
+  owner: unknown

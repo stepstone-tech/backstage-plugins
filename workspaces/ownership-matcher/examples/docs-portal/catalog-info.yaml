@@ -1,0 +1,14 @@
+# orphaned check fails and there are no commits in
+# packages/backend/src/scm/fixtures.ts, so org-proximity is the only strategy that scores it:
+# 0.3 * 0.6 / (0.5 + 0.3) = 0.225, below the 0.4 notification threshold. This
+# is the component that keeps `possible_owner` reachable.
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: docs-portal
+  description: Placeholder owner, a parent system, and nobody committing to it
+spec:
+  type: website
+  lifecycle: experimental
+  owner: unknown
+  system: internal-tools
