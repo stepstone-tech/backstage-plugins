@@ -33,7 +33,7 @@ export interface CatalogComponent {
     domain?: string;
     lifecycle?: string;
     type?: string;
-    profile?: { title?: string; [key: string]: unknown };
+    profile?: { title?: string; email?: string; [key: string]: unknown };
   };
 }
 

@@ -196,13 +196,13 @@ How your catalog models people and teams. Also read by the frontend and by other
 
 | Key                     | Default  | Description                                                                                                                      |
 | ----------------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| `annotations.userAlias` | unset    | User annotation with an alternative login. Commit emails whose local part doesn't match a user name are matched against it.      |
+| `annotations.userAlias` | unset    | User annotation with an alternative login. Commit emails that match neither a user's `spec.profile.email` nor a user name are matched against it by local part.      |
 | `annotations.manager`   | unset    | User annotation with the manager's `userAlias` value. Required, together with `userAlias`, for levels with `managerChain: true`. |
 | `teamGroupTypes`        | `[team]` | Group `spec.type` values that can own entities. Must not be empty.                                                               |
 
 ### `scm`
 
-`scm.hosts[]` adds per-host settings to the `integrations.*` entries. `writeToken` is used for catalog-info PRs. Hosts, API URLs and read credentials come from `integrations.*`.
+`scm.hosts[]` adds per-host settings to the `integrations.*` entries. `writeToken` is used for catalog-info PRs. Providers never fall back to the integration credentials for writes: without a `writeToken`, PR automation is refused for the host. To reuse the integration's token, point `writeToken` at the same secret (e.g. `${GITLAB_TOKEN}`). Hosts, API URLs and read credentials come from `integrations.*`.
 
 ### `prCreation`
 

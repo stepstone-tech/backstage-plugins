@@ -7390,6 +7390,20 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@stepstone-tech/backstage-plugin-ownership-matcher-backend-module-gitlab@workspace:workspaces/ownership-matcher/plugins/ownership-matcher-backend-module-gitlab":
+  version: 0.0.0-use.local
+  resolution: "@stepstone-tech/backstage-plugin-ownership-matcher-backend-module-gitlab@workspace:workspaces/ownership-matcher/plugins/ownership-matcher-backend-module-gitlab"
+  dependencies:
+    "@backstage/backend-plugin-api": "npm:^1.10.1"
+    "@backstage/backend-test-utils": "npm:^1.11.7"
+    "@backstage/cli": "npm:^0.36.6"
+    "@backstage/config": "npm:^1.3.9"
+    "@backstage/integration": "npm:^2.1.2"
+    "@stepstone-tech/backstage-plugin-ownership-matcher-backend": "workspace:^"
+    "@stepstone-tech/backstage-plugin-ownership-matcher-node": "workspace:^"
+  languageName: unknown
+  linkType: soft
+
 "@stepstone-tech/backstage-plugin-ownership-matcher-backend-module-msgraph-email@workspace:workspaces/ownership-matcher/plugins/ownership-matcher-backend-module-msgraph-email":
   version: 0.0.0-use.local
   resolution: "@stepstone-tech/backstage-plugin-ownership-matcher-backend-module-msgraph-email@workspace:workspaces/ownership-matcher/plugins/ownership-matcher-backend-module-msgraph-email"

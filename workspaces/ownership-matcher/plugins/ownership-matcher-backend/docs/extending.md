@@ -69,7 +69,7 @@ describeScmProviderConformance(gitlabProvider, { fakeServer });
 
 `fakeServer` provides the integration, a `fetch` serving a fake SCM, a sample location with its expected parse, and a hook that makes a file revision stale. The suite covers location parsing, host-restricted `fetch`, idempotent branch and PR creation, `conflict` on a stale revision and reading a PR back.
 
-[Bitbucket Server](../../ownership-matcher-backend-module-bitbucket-server/README.md) is the reference implementation.
+[Bitbucket Server](../../ownership-matcher-backend-module-bitbucket-server/README.md) and [GitLab](../../ownership-matcher-backend-module-gitlab/README.md) are reference implementations.
 
 ## Email sender
 

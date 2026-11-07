@@ -74,20 +74,30 @@ export class ContributorService {
 
     const userData = await this.loadUserData();
 
-    // Match on the portion before any '_' suffix in both the email prefix and
-    // the catalog user name — accommodates common LDAP conventions. Failing
-    // that, match the whole local part against the user's configured alias
+    // First, match the full commit email against the user's
+    // `spec.profile.email` (case-insensitive) — exact and provider-independent
+    // for anyone who commits with their work address. Failing that, match on
+    // the portion before any '_' suffix in both the email prefix and the
+    // catalog user name — accommodates common LDAP conventions. Failing that,
+    // match the whole local part against the user's configured alias
     // annotation (case-insensitive: directories store some as e.g. `DoeJ01`),
     // since many people commit under their alias rather than their name.
-    const localPart = email.split('@')[0].toLowerCase();
+    const emailLower = email.toLowerCase();
+    const localPart = emailLower.split('@')[0];
     const emailPrefix = localPart.split('_')[0];
 
-    // Require `memberOf` inside each lookup so a name-prefix match without
-    // memberOf doesn't hide an alias match.
+    // Require `memberOf` inside each lookup so a match without memberOf
+    // doesn't hide a later one.
     const hasMembership = (user: CatalogComponent) =>
       Boolean(user.spec?.memberOf);
     const aliasAnnotation = this.userAliasAnnotation;
     const matchingUser =
+      userData.find(
+        user =>
+          hasMembership(user) &&
+          typeof user.spec?.profile?.email === 'string' &&
+          user.spec.profile.email.toLowerCase() === emailLower,
+      ) ??
       userData.find(
         user =>
           hasMembership(user) &&

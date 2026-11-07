@@ -2,7 +2,7 @@
 
 When a case is accepted, the plugin opens a pull request that sets `spec.owner` to the accepted team in the entity's `catalog-info.yaml`. The file is found through the `backstage.io/managed-by-location` annotation. Configuration: [`prCreation`](configuration.md#prcreation) and [`scm`](configuration.md#scm).
 
-This needs an SCM provider module with pull request support for the host (e.g. [Bitbucket Server](../../ownership-matcher-backend-module-bitbucket-server/README.md)) and a `writeToken` for it.
+This needs an SCM provider module with pull request support for the host (e.g. [Bitbucket Server](../../ownership-matcher-backend-module-bitbucket-server/README.md) or [GitLab](../../ownership-matcher-backend-module-gitlab/README.md)) and a `writeToken` for it (`ownershipMatcher.scm.hosts[].writeToken`). Providers never fall back to the integration credentials for writes.
 
 ## PR job
 

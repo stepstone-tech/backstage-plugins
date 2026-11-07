@@ -15,7 +15,7 @@ backend.add(
 );
 ```
 
-Requires the catalog, notifications, events and permission backends. Add an SCM provider module (for example [Bitbucket Server](../ownership-matcher-backend-module-bitbucket-server/README.md)) for commit-based proposals and catalog-info PRs.
+Requires the catalog, notifications, events and permission backends. Add an SCM provider module (for example [Bitbucket Server](../ownership-matcher-backend-module-bitbucket-server/README.md) or [GitLab](../ownership-matcher-backend-module-gitlab/README.md)) for commit-based proposals and catalog-info PRs.
 
 ## Configuration
 

@@ -38,6 +38,7 @@ See [Statuses](plugins/ownership-matcher-backend/docs/statuses.md) and [Escalati
 | [`@stepstone-tech/backstage-plugin-ownership-matcher-node`](plugins/ownership-matcher-node/README.md)                                                       | Extension points and contracts for modules        |
 | [`@stepstone-tech/backstage-plugin-ownership-matcher-common`](plugins/ownership-matcher-common/README.md)                                                   | Notification origin and topic names               |
 | [`@stepstone-tech/backstage-plugin-ownership-matcher-backend-module-bitbucket-server`](plugins/ownership-matcher-backend-module-bitbucket-server/README.md) | Bitbucket Server SCM provider                     |
+| [`@stepstone-tech/backstage-plugin-ownership-matcher-backend-module-gitlab`](plugins/ownership-matcher-backend-module-gitlab/README.md)                     | GitLab SCM provider                               |
 | [`@stepstone-tech/backstage-plugin-ownership-matcher-backend-module-msgraph-email`](plugins/ownership-matcher-backend-module-msgraph-email/README.md)       | Email digest sender using Microsoft Graph         |
 
 ## Local development
@@ -115,7 +116,7 @@ Two statuses stay out of reach here. `to_archive` needs an escalation action and
 
 Outside production the `/leadership/*` endpoints accept `?asUser=<entityRef>`, which is the quickest way to check the lead-only views as somebody else — for example `user:default/alice`, who leads nothing.
 
-The Bitbucket Server and Microsoft Graph modules need real credentials, so the dev backend doesn't install them. To try one, configure it in `app-config.local.yaml` and add it in `packages/backend/src/index.ts`.
+The Bitbucket Server, GitLab and Microsoft Graph modules need real credentials, so the dev backend doesn't install them. To try one, configure it in `app-config.local.yaml` and add it in `packages/backend/src/index.ts`.
 
 ## Integration tests
 
